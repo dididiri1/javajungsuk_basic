@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class Customer implements Comparable<Customer>{
 
     private String name;
@@ -27,11 +29,32 @@ public class Customer implements Comparable<Customer>{
     @Override
     public int compareTo(Customer customer) {
         if (this.age > customer.getAge()) {
-            return -1;
+            return 1;
         } else if (this.age == customer.getAge()) {
             return 0;
         } else {
             return -1;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return getAge() == customer.getAge() && Objects.equals(getName(), customer.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getAge());
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

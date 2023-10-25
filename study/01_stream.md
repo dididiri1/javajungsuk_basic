@@ -279,3 +279,165 @@ public class Ex04 {
 |  toArray  |             스트림의 모든 요소를 배열로 반환              |
 
 
+# 자바 기초 강의 - 5-10강 스트림의 이해와 활용(4)
+
+## 필터링
+- 필터링은 전체 데이터에서 불필요한 데이터를 없애고 원하는 데이터를 정확히 추축하기 위한 과정이다.
+- Stream API의 filter(), distinct()와 같은 메소드를 이용해 데이터 출이나 중복 제거를 구현한다.
+- 필터링 연산은 스트림의 중간 연산으로 필터링 결과는 Stream 객체로 반환하며 연산 완료를 위한 최종 연산이 필요하다.
+- 데이터의 중복을 제거하는 distinct()는 병렬 스트림의 경우 선능에 대한 고려가 필요하며 종복 객체의 비교는 equals()  
+  메소드를 이용하기 때문에 이에 대한 고려 또한 필요하다.
+
+``` java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Ex05 {
+
+    public static void main(String[] args) {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("Kim", 33));
+        customers.add(new Customer("Park", 21));
+        customers.add(new Customer("Song", 45));
+        customers.add(new Customer("Lee", 67));
+        customers.add(new Customer("Choi", 19));
+        customers.add(new Customer("Kim", 33)); // 중복 데이터
+
+        customers.stream()
+                .filter(customer -> customer.getAge() > 30)
+                .forEach(System.out::println);
+
+        System.out.println();
+
+        customers.stream()
+                .filter(customer -> customer.getAge() > 30)
+                .distinct()
+                .forEach(System.out::println);
+    }
+}
+```
+
+``` console
+Customer{name='Kim', age=33}
+Customer{name='Song', age=45}
+Customer{name='Lee', age=67}
+Customer{name='Kim', age=33}
+
+Customer{name='Kim', age=33}
+Customer{name='Song', age=45}
+Customer{name='Lee', age=67}
+
+``` 
+
+### distinct
+- Customer.java의 equals, hashCode 있어야됨.
+``` java
+import java.util.Objects;
+
+public class Customer implements Comparable<Customer>{
+    
+    ``` 
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return getAge() == customer.getAge() && Objects.equals(getName(), customer.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getAge());
+    }
+    
+}
+``` 
+
+## 정렬
+- Stream API의 sorted() 메소드는 특정 조건에 따라 데이터를 정렬하고 이를 다시 Stream으로 반환함
+- sorted()를 이용한 정렬을 위해서는 반드시 대상 객체들이 Comparable 인터페이스를 구현한 클래스, 즉 비교 가능한  
+  객체야 한다.
+- Comparable 객체가 아닐 경우나 역순 정렬, 혹은 다른 조건의 정렬에는 Compartor 인터페이스가 제공하는 여러  
+  default, static 메소드를 이용해 정렬을 구현함.
+
+### Customer.java
+``` java
+public class Customer implements Comparable<Customer>{
+
+    ``` 
+    
+    @Override
+    public int compareTo(Customer customer) {
+        if (this.age > customer.getAge()) {
+            return 1;
+        } else if (this.age == customer.getAge()) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+}
+
+``` 
+### compareTo 이용한 정렬
+``` java
+import java.util.ArrayList;
+import java.util.List;
+
+public class Ex06 {
+
+    public static void main(String[] args) {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("Kim", 33));
+        customers.add(new Customer("Park", 21));
+        customers.add(new Customer("Song", 45));
+        customers.add(new Customer("Lee", 67));
+        customers.add(new Customer("Choi", 19));
+
+        customers.stream()
+                .sorted()
+                .forEach(System.out::println);
+    }
+}
+
+```
+``` console
+Customer{name='Choi', age=19}
+Customer{name='Park', age=21}
+Customer{name='Kim', age=33}
+Customer{name='Song', age=45}
+Customer{name='Lee', age=67}
+``` 
+
+### Comparator.comparing 이용한 정렬
+``` java
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+public class Ex06 {
+
+    public static void main(String[] args) {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("Kim", 33));
+        customers.add(new Customer("Park", 21));
+        customers.add(new Customer("Song", 45));
+        customers.add(new Customer("Lee", 67));
+        customers.add(new Customer("Choi", 19));
+
+        customers.stream()
+                .sorted(Comparator.comparing(Customer::getAge))
+                .sorted(Comparator.comparing(Customer::getAge).reversed())
+                .forEach(System.out::println);
+    }
+}
+
+```
+``` console
+Customer{name='Lee', age=67}
+Customer{name='Song', age=45}
+Customer{name='Kim', age=33}
+Customer{name='Park', age=21}
+Customer{name='Choi', age=19}
+``` 
