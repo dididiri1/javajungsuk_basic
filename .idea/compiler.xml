@@ -7,8 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ch01" />
-        <module name="stream" />
         <module name="ch07" />
+        <module name="lambda" />
+        <module name="stream" />
       </profile>
     </annotationProcessing>
   </component>
