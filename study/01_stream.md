@@ -441,3 +441,70 @@ Customer{name='Kim', age=33}
 Customer{name='Park', age=21}
 Customer{name='Choi', age=19}
 ``` 
+
+# 자바 기초 강의 - 5-11강 스트림의 이해와 활용(5)
+
+## 맵핑
+- 스트림의 매핑(map) 연산은 스트림이 관리하는 데이터를 다른 형태의 데이터로 변환할 수 있도록 한다.
+- 매핑 연산의 메소드는 map(), mapToInt(), mapToDouble(), mapToLong()이 있다.
+- 주로 사용하는 메소드는 map() 메소드이며 파라미터는 Function 함수형 인터페이스 이다.
+- double, int, long 기본형 데이터 타입의 데이터를 처리하기 위한 메소드들은 매핑된 값의 결과가 기본형  
+  데이터 타입일 경우 작용하여 사용한다.
+
+``` java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Ex07 {
+
+    public static void main(String[] args) {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer("Kim", 33));
+        customers.add(new Customer("Park", 21));
+        customers.add(new Customer("Song", 45));
+        customers.add(new Customer("Lee", 67));
+        customers.add(new Customer("Choi", 19));
+
+        List<String> names = customers.stream()
+                .map(Customer::getName)
+                .collect(Collectors.toList());
+
+        names.stream().forEach(System.out::println);
+
+        System.out.println();
+
+        customers.stream()
+                .map(Customer::getName)
+                .forEach(System.out::println);
+    }
+}
+```
+``` console
+Kim
+Park
+Song
+Lee
+Choi
+
+Kim
+Park
+Song
+Lee
+Choi
+``` 
+
+## 최종 연산
+- 스크림이 관리하는 전체 데이터에 대한 순회 작업은 최종 연산인 forEach() 메소드를 이용한다.
+- collect() 메소드는 스트림 처리 이후 처리된 데이터에 대해 Collection 객체로 반환하는 메소드이다.
+- 스트림의 최종 연산은 forEach()와 같은 스트림 처리 결과를 바로 확인할 수 있는 연산이 있고, 데이터를 모두 소모한  
+  이후에 그 결과를 알 수 있는 count()와 같은 연산이 있다.
+- 이외에도 특정 데이터를 검색할 수 있는 allMatch(), anyMatch()등과 같은 다양한 메소드를 제공하고 있다.
+
+|    연산     | 반환 형식                                       |
+|:---------:|:--------------------------------------------|
+| allMatch  | 파라미터로 전달되는 람다식 기준으로 스트림 데이터가 모두 일치하는지를 확인   |
+| anyMatch  | 파라미터로 전달되는 람다식 기준으로 스트림 데이터가 하나라도 일치하는지 확인  |
+| noneMatch | 파라미터로 전달되는 람다식 기준으로 스트림 데이터가 모두 일치하지 않는지 확인 |
+| findFirst | 스트림 데이터 중에서 가장 첫번째 데이터를 반환                  |
+|  reduce   | 스트림 데이터 중에서 임의의 데이터를 반환                     |
